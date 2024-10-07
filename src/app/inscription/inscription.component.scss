@@ -1,0 +1,74 @@
+.inscription-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #f5f5f5;
+  
+    .inscription-form {
+      width: 20%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 3rem;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      border-radius: 10px;
+      justify-content: center;
+      align-items: center;
+  
+      input {
+        width: 90%
+      }
+  
+      button {
+        width: calc(90% + 2rem);
+      }
+    }
+  }
+  
+  .logo {
+    width: 20vb;
+    /* taille du logo */
+    height: auto;
+    /* pour garder les proportions */
+    margin-bottom: 20px;
+    /* espace entre le logo et le formulaire */
+    border-radius: 50%;
+    /* Arrondit les bords du logo */
+  }
+  
+  /* Container pour chaque champ, qui reste vertical */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    /* Affiche le titre au-dessus du champ */
+    align-items: flex-start;
+    /* Aligne le titre à droite */
+    width: 100%;
+    /* S'adapte à la largeur du formulaire */
+  }
+  
+  /* Titre des champs alignés à droite */
+  .input-name {
+    text-align: right;
+    /* Aligne le texte à droite */
+    margin-bottom: 5px;
+    /* Espace entre le titre et le champ */
+  }
+  
+  .signup-text {
+    margin-top: 15px; /* Espace au-dessus de la phrase */
+    text-align: center; /* Centrer le texte */
+  }
+  
+  .signup-text a {
+    color: #007bff; /* Couleur du lien */
+    text-decoration: none; /* Supprime le soulignement */
+  }
+  
+  .signup-text a:hover {
+    text-decoration: underline; /* Souligne le lien au survol */
+  }
