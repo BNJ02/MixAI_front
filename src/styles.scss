@@ -36,10 +36,8 @@ input {
   border: none;
   background-color: #f5f5f5;
   /* Couleur de fond claire pour le champ */
-  border-radius: 8px;
-  padding-inline: 1rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   /* Légère ombre pour l'effet de profondeur */
+  outline: none;
 
   &.invalid {
     border: 2px solid red;
@@ -73,7 +71,8 @@ button {
   &.btn-1 {
     background-color: #4a90e2;
     color: white;
-    font-size: 1.17em; /* Approximativement la taille d'un h3 */
+    font-size: 1.17em;
+    /* Approximativement la taille d'un h3 */
   }
 
   &.btn-2 {

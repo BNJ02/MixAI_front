@@ -1,0 +1,41 @@
+<div class="wrapper">
+
+    @if (sideNavOpen) {
+        <div @slideInFromLeft class="side-nav">
+        </div>
+    }
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div (click)="sideNavOpen = !sideNavOpen" [ngClass]="{isActive: sideNavOpen}" class="burger-container">
+                <img src="../../assets/icones/fleche-droite.png" alt="" class="arrow-icon">
+            </div>
+        </div>
+
+        <div class="chat-body">
+
+        </div>
+
+        <div class="chat-input">
+            <div class="input-wrapper">
+                <div class="left">
+                    <select name="" id="">
+                        @for (model of models; track $index) {
+                        <option value="{{model.name}}">{{ model.name }}</option>
+                        }
+                    </select>
+
+                    <input type="text" placeholder="Type a message" />
+                </div>
+
+                <div class="send-container">
+                    <img src="../../assets/icones/send.png" alt="" class="send-icon" />
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-box">
+
+        </div>
+    </div>
+</div>

@@ -1,7 +1,11 @@
 <div class="connexion-container">
 
     <!-- Formulaire de connexion -->
-    <form class="connexion-form">
+    <form 
+        [formGroup]="loginForm" 
+        class="connexion-form" 
+        (submit)="connexion()"
+    >
         <!-- Logo de l'application -->
         <img src="../../assets/images/logo_MixAI_comp.png" alt="" class="logo">
 
@@ -11,12 +15,20 @@
         <!-- Champs du formulaire avec les titres alignés à droite -->
         <div class="input-group">
             <h3 class="input-name">Email</h3>
-            <input formControlName="email" type="email" />
+            <input 
+                [ngClass]="{ invalid: isInvalidField('email') }" 
+                formControlName="email" 
+                type="email" 
+            />
         </div>
 
         <div class="input-group">
             <h3 class="input-name">Password</h3>
-            <input formControlName="password" type="password" />
+            <input 
+                [ngClass]="{ invalid: isInvalidField('password') }" 
+                formControlName="password" 
+                type="password" 
+            />
         </div>
 
         <!-- Bouton de connexion -->

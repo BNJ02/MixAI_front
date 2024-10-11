@@ -1,0 +1,116 @@
+.wrapper {
+    display: flex;
+    width: 100%;
+
+    .side-nav {
+        width: 30%;
+        height: 100vh;
+    }
+
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+        background-color: #f5f5f5;
+
+
+        .chat-header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+
+            .burger-container {
+                height: 50px;
+                width: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: 0.1s;
+
+                &.isActive {
+                    transform: rotate(180deg);
+                }
+
+                &:hover {
+                    background-color: rgb(235, 235, 235);
+                }
+
+                .arrow-icon {
+                    height: 50%;
+                }
+            }
+        }
+
+        .chat-body {
+            width: 100%;
+        }
+
+        .chat-input {
+            position: fixed;
+            bottom: 2rem;
+            width: 50%;
+            height: 10vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+
+            .input-wrapper {
+                width: 80%;
+                padding: 0.5rem;
+                border: solid 1px #ccc;
+                border-radius: 15px;
+                box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .left {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    width: 100%;
+
+                    input {
+                        padding-inline-start: 1.5rem;
+                        font-size: 1rem;
+                        width: 100%;
+                    }
+
+                }
+
+
+
+
+                .send-container {
+                    height: 50px;
+                    width: 50px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: none;
+                    border-radius: 50%;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: rgb(235, 235, 235);
+                    }
+
+                    .send-icon {
+                        height: 50%;
+                    }
+                }
+            }
+
+        }
+    }
+}
