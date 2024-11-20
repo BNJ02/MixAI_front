@@ -65,7 +65,7 @@
             padding: 1rem;
 
             .input-wrapper {
-                width: 80%;
+                width: 90%;
                 padding: 0.5rem;
                 border: solid 1px #ccc;
                 border-radius: 15px;
@@ -84,12 +84,11 @@
                         padding-inline-start: 1.5rem;
                         font-size: 1rem;
                         width: 100%;
+                        border: none;
+                        background-color: inherit;
                     }
 
                 }
-
-
-
 
                 .send-container {
                     height: 50px;
