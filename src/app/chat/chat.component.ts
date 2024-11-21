@@ -76,6 +76,26 @@ export class ChatComponent {
     this.selectedDiscussion = discussion;
   }
 
+  deleteDiscussion(discussion: { title: string; content: string }): void {
+    this.discussions = this.discussions.filter((d) => d !== discussion);
+    this.filteredDiscussions = this.filteredDiscussions.filter((d) => d !== discussion);
+    this.selectedDiscussion
+      = this.selectedDiscussion === discussion ? null : this.selectedDiscussion;
+
+    if (this.discussions.length === 0) {
+      this.selectedDiscussion = null;
+    }
+  }
+
+  addDiscussion(): void {
+    this.discussions.push({
+      title: `Discussion ${this.discussions.length + 1}`,
+      content: `Contenu de la discussion ${this.discussions.length + 1}`
+    });
+
+    this.filteredDiscussions = [...this.discussions];
+  }
+
   public sideNavOpen = false;
 
   public models: Model[] = [
