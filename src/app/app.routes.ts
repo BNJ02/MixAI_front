@@ -3,10 +3,11 @@ import { ConnexionComponent } from './connexion/connexion.component';
 import { InscriptionComponent } from './inscription/inscription.component';
 import { ChatComponent } from './chat/chat.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AnonymousGuard } from './guards/anonymous.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'signin', pathMatch: 'full' },
-    { path: 'signin', component: ConnexionComponent },
-    { path: 'signup', component: InscriptionComponent },
+    { path: 'signin', component: ConnexionComponent, canActivate: [AnonymousGuard] },
+    { path: 'signup', component: InscriptionComponent, canActivate: [AnonymousGuard] },
     { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
 ];
