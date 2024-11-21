@@ -1,7 +1,17 @@
 <div class="wrapper">
 
     @if (sideNavOpen) {
-        <div @slideInFromLeft class="side-nav">
+        <div class="side-nav">
+            <div class="side-nav-discussions">
+                @for (discussion of discussions; track $index) {
+                    <div class="discussions" name="" id="">
+                        <p>{{discussion.title}}</p>
+                        <img src="../../assets/icones/carbage.png" alt="" class="delete-discussion">
+                    </div>
+                }
+            </div>
+
+            <button class="add-discussion">Add discussion</button>
         </div>
     }
 
@@ -21,7 +31,7 @@
                 <div class="left">
                     <select name="" id="">
                         @for (model of models; track $index) {
-                        <option value="{{model.name}}">{{ model.name }}</option>
+                            <option value="{{model.name}}">{{ model.name }}</option>
                         }
                     </select>
 
