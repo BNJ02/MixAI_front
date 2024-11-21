@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../types/loginResponse.interface';
 import { Observable } from 'rxjs';
@@ -10,7 +11,10 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   public login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/signin`, {
@@ -19,20 +23,20 @@ export class AuthService {
     });
   }
 
-  saveToken(token: string) {
+  public saveToken(token: string) {
     localStorage.setItem('token', token);
   }
 
-  getToken(): string | null {
+  public getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  logout() {
+  public logout() {
     localStorage.removeItem('token');
     window.location.reload();
   }
 
-  isAuthenticated(): boolean {
+  public isAuthenticated(): boolean {
     // Vérifiez si le token existe
     const token = this.getToken();
     return !!token; // Retourne true si le token existe, sinon false
