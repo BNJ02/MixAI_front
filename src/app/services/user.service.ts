@@ -20,12 +20,9 @@ export class UserService {
     return this.http.get<User[]>(this.apiUrl);
   }
 
-  getUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/profile`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+
+  public getMe(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/profile`);
   }
 
   updateUser(userData: User): Observable<User> {
