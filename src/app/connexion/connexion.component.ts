@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InscriptionSuccess } from '../types/inscriptionSuccess.interface';
-import { SuccessService } from '../services/success.service';
+import { SignupSuccess } from '../types/signupSuccess.interface';
+import { SigninSuccess } from '../types/signinSuccess.interface';
+import { SignupSuccessService } from '../services/signupSuccess.service';
+import { SigninSuccessService } from '../services/signinSuccess.service';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { catchError, EMPTY, tap } from 'rxjs';
@@ -16,14 +18,16 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './connexion.component.scss'
 })
 export class ConnexionComponent {
-  public signinSuccess: InscriptionSuccess | null = null;
+  public signupSuccess: SignupSuccess | null = null;
+  public signinSuccess: SigninSuccess | null = null;
   public signinError: Error;
   public loading: boolean = false;
 
   public loginForm: FormGroup;
 
   public constructor(
-    private succesService: SuccessService,
+    private signupSuccessService: SignupSuccessService,
+    private signinSuccessService: SigninSuccessService,
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService
@@ -35,10 +39,10 @@ export class ConnexionComponent {
   }
 
   public ngOnInit(): void {
-    this.signinSuccess = this.succesService.getInscriptionData();
+    this.signupSuccess = this.signupSuccessService.getSignupData();
 
-    if (this.signinSuccess) {
-      this.loginForm.get('email')?.setValue(this.signinSuccess.email);
+    if (this.signupSuccess) {
+      this.loginForm.get('email')?.setValue(this.signupSuccess.email);
     }
   }
 
@@ -46,7 +50,7 @@ export class ConnexionComponent {
     const field = this.loginForm.get(formControlName);
     return (field?.invalid && field?.touched) ?? true;
   }
-  
+
   public connexion(): void {
     if (this.loginForm.valid) {
       this.loading = true;
@@ -63,6 +67,11 @@ export class ConnexionComponent {
           }),
           tap((response) => {
             this.authService.saveToken(response.token.access_token);
+            const signinSuccess: SigninSuccess = {
+              succes: 'Sign in successful',
+              email: email,
+            };
+            this.signinSuccessService.setSigninData(signinSuccess);
             this.router.navigate(['/chat']).then(() => {
               this.loading = false;
             });

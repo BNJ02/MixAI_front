@@ -1,5 +1,11 @@
-<div class="wrapper">
+@if (registrationCompleted) {
+    <app-alert 
+        [title]="signinSuccessMessage" 
+        [message]="'We hope to greatly assist you in your productivity today.'">
+    </app-alert>
+}
 
+<div class="wrapper">
     @if (sideNavOpen) {
         <div class="side-nav">
             <div class="side-nav-discussions">

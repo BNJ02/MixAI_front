@@ -10,6 +10,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { SigninSuccessService } from '../services/signinSuccess.service';
+import { SigninSuccess } from '../types/signinSuccess.interface';
+import { Router } from '@angular/router';
+import { AlertComponent } from '../alert/alert.component';
+import { UserService } from '../services/user.service';
+import { User } from '../types/user.interface';
 
 export interface Model {
   name: string
@@ -18,15 +24,26 @@ export interface Model {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [NgClass, MatSidenavModule, MatIconModule, MatListModule, MatFormFieldModule, CommonModule],
+  imports: [NgClass, MatSidenavModule, MatIconModule, MatListModule, MatFormFieldModule, CommonModule, AlertComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
   animations: [slideInFromLeft]
 })
 export class ChatComponent {
-  constructor(private authService: AuthService) {}
+alertMessage: any;
+  constructor(
+    private authService: AuthService, 
+    private signinSuccessService: SigninSuccessService,
+    private userService: UserService,
+    private router: Router
+  ) {}
+
+  public user: User;
 
   public sideNavOpen = false;
+  public registrationCompleted: boolean;
+  public signinSuccess: SigninSuccess;
+  public signinSuccessMessage: string = 'Great to see you back again';
 
   public models: Model[] = [
     { name: 'Gemini'},
@@ -42,6 +59,26 @@ export class ChatComponent {
 
   public filteredDiscussions = [...this.discussions];
   public selectedDiscussion: { title: string; content: string } | null = null;
+
+  public async ngOnInit(): Promise<void> {
+    const signinData = this.signinSuccessService.getSigninData();
+    
+    if (!signinData) {
+      this.router.navigate(['/connexion']);
+      return;
+    } else {
+      this.signinSuccess = signinData;
+      this.userService.getMe().subscribe((user) => {
+        this.user = user;
+        // Construire le message après que l'utilisateur ait été chargé
+        this.signinSuccessMessage = `Great to see you back again, ${this.user.firstName}!`;
+        this.registrationCompleted = true;
+        setTimeout(() => {
+          this.registrationCompleted = false;
+        }, 5000);
+      });
+    }
+  }
 
   public filterDiscussions(event: Event): void {
     const query = (event.target as HTMLInputElement).value.toLowerCase();

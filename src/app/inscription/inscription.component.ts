@@ -6,8 +6,8 @@ import { UserService } from '../services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, EMPTY, Observable, tap } from 'rxjs';
 import { User } from '../types/user.interface';
-import { InscriptionSuccess } from '../types/inscriptionSuccess.interface';
-import { SuccessService } from '../services/success.service';
+import { SignupSuccess } from '../types/signupSuccess.interface';
+import { SignupSuccessService } from '../services/signupSuccess.service';
 
 @Component({
   selector: 'app-inscription',
@@ -27,7 +27,7 @@ export class InscriptionComponent {
     private userService: UserService,
     private fb: FormBuilder,
     private router: Router,
-    private successService: SuccessService
+    private successService: SignupSuccessService
   ) {
     this.inscriptionForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -57,13 +57,13 @@ export class InscriptionComponent {
             return EMPTY;
           }),
           tap((res: Partial<User>) => {
-            if(res) {
-              const inscriptionSuccess: InscriptionSuccess = {
-                succes: 'Inscription réussie',
+            if (res) {
+              const signupSuccess: SignupSuccess = {
+                succes: 'Sign up successful',
                 name: this.inscriptionForm.value.firstName,
                 email: this.inscriptionForm.value.email,
               };
-              this.successService.setInscriptionData(inscriptionSuccess);
+              this.successService.setSignupData(signupSuccess);
               this.loading = false;
               this.router.navigate(['/signin']);
             }

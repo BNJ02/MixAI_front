@@ -4,6 +4,8 @@ import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { User } from '../types/user.interface';
 import { combineLatest } from 'rxjs';
+import { SigninSuccessService } from '../services/signinSuccess.service';
+import { SigninSuccess } from '../types/signinSuccess.interface';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +16,7 @@ import { combineLatest } from 'rxjs';
 })
 export class ProfileComponent {
   public profileForm: FormGroup;
-
+  public signinSuccess: SigninSuccess;
   public user: User;
 
   constructor(
@@ -29,7 +31,7 @@ export class ProfileComponent {
     });
   }
 
-  public ngOnInit(): void {
+  public ngOnInit(): void {    
     this.userService.getMe()
       .subscribe((user) => {
         this.user = user;
