@@ -20,6 +20,7 @@ export class InscriptionComponent {
   // Attributes
   public inscriptionForm: FormGroup;
   public inscriptionError: Error | undefined;
+  public loading: boolean = false;
 
   // Constructor
   constructor(
@@ -46,11 +47,13 @@ export class InscriptionComponent {
   public inscription(): void {
     this.inscriptionForm.markAllAsTouched();
     if (this.inscriptionForm.valid) {
+      this.loading = true;
       this.userService
         .createUser(this.inscriptionForm.value)
         .pipe(
           catchError((error: HttpErrorResponse) => {
             this.inscriptionError = error.error;
+            this.loading = false;
             return EMPTY;
           }),
           tap((res: Partial<User>) => {
@@ -61,6 +64,7 @@ export class InscriptionComponent {
                 email: this.inscriptionForm.value.email,
               };
               this.successService.setInscriptionData(inscriptionSuccess);
+              this.loading = false;
               this.router.navigate(['/signin']);
             }
           })

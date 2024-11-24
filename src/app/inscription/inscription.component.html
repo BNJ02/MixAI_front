@@ -12,6 +12,14 @@
         <!-- Titre du formulaire -->
         <h3>Register an account</h3>
 
+        <!-- Message d'erreur conditionnel -->
+        @if (inscriptionError) {
+            <div @slideFromTop class="warning-box error">
+                <h4>An error occured ...</h4>
+                <h4>{{ inscriptionError.message }}</h4>
+            </div>
+        }
+
         <!-- Champs du formulaire avec les titres alignés à droite -->
         <div class="input-group">
             <h3 class="input-name">E-Mail</h3>
@@ -50,7 +58,12 @@
         </div>
 
         <!-- Bouton de inscription -->
-        <button type="submit" class="btn-1">Sign up</button>
+        <button type="submit" class="btn-1">
+            <div *ngIf="loading; else notLoading" class="loader"></div>
+            <ng-template #notLoading>
+                <h4 class="btn-1">Sign in with password</h4>
+            </ng-template>
+        </button>
 
         <!-- Phrase avec lien pour s'inscrire -->
         <p class="signup-text">

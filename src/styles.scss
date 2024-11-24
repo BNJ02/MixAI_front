@@ -71,7 +71,7 @@ button {
   &.btn-1 {
     background-color: #4a90e2;
     color: white;
-    font-size: 1.17em;
+    font-size: 1em;
     /* Approximativement la taille d'un h3 */
   }
 
@@ -110,17 +110,15 @@ button {
 .warning-box {
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  width: 20%;
   padding: 1rem;
-  color: white;
+  color: inherit;
 
   &.success {
-    background-color: rgb(77, 147, 77);
+    color: rgb(77, 147, 77);
   }
 
   &.error {
-    background-color: rgb(239, 72, 72);
+    color: rgb(239, 72, 72);
   }
 }
 

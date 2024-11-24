@@ -13,7 +13,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   createUser(userData: User): Observable<any> {
-    return this.http.post(this.apiUrl, userData).pipe(delay(1500));
+    return this.http.post(this.apiUrl, userData).pipe(delay(2000));
   }
 
   getUsers(): Observable<User[]> {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../types/loginResponse.interface';
-import { Observable } from 'rxjs';
+import { delay, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/signin`, {
       email,
       password,
-    });
+    }).pipe(delay(2000));
   }
 
   public saveToken(token: string) {

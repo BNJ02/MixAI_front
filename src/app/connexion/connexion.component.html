@@ -1,38 +1,42 @@
 <div class="connexion-container">
-
     <!-- Formulaire de connexion -->
-    <form 
-        [formGroup]="loginForm" 
-        class="connexion-form" 
-        (submit)="connexion()"
-    >
+    <form [formGroup]="loginForm" class="connexion-form" (submit)="connexion()">
         <!-- Logo de l'application -->
         <img src="../../assets/images/logo_MixAI_comp.png" alt="" class="logo">
 
         <!-- Titre du formulaire -->
         <h3>Sign in</h3>
 
+        @if (signinSuccess) {
+        <div @slideFromTop class="warning-box success">
+            <h4>Welcome {{ signinSuccess.name }}, you can now log in!</h4>
+        </div>
+        }
+
+        <!-- Message d'erreur conditionnel -->
+        <div *ngIf="signinError" @slideFromTop class="warning-box error">
+            <h4>An error occurred...</h4>
+            <h4>{{ signinError.message }}</h4>
+        </div>
+
         <!-- Champs du formulaire avec les titres alignés à droite -->
         <div class="input-group">
             <h3 class="input-name">Email</h3>
-            <input 
-                [ngClass]="{ invalid: isInvalidField('email') }" 
-                formControlName="email" 
-                type="email" 
-            />
+            <input [ngClass]="{ invalid: isInvalidField('email') }" formControlName="email" type="email" />
         </div>
 
         <div class="input-group">
             <h3 class="input-name">Password</h3>
-            <input 
-                [ngClass]="{ invalid: isInvalidField('password') }" 
-                formControlName="password" 
-                type="password" 
-            />
+            <input [ngClass]="{ invalid: isInvalidField('password') }" formControlName="password" type="password" />
         </div>
 
         <!-- Bouton de connexion -->
-        <button type="submit" class="btn-1">Sign in with password</button>
+        <button type="submit" class="btn-1">
+            <div *ngIf="loading; else notLoading" class="loader"></div>
+            <ng-template #notLoading>
+                <h4 class="btn-1">Sign in with password</h4>
+            </ng-template>
+        </button>
 
         <!-- Phrase avec lien pour s'inscrire -->
         <p class="signup-text">

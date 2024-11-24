@@ -4,8 +4,9 @@ import { InscriptionSuccess } from '../types/inscriptionSuccess.interface';
 import { SuccessService } from '../services/success.service';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { tap } from 'rxjs';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-connexion',
@@ -15,7 +16,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './connexion.component.scss'
 })
 export class ConnexionComponent {
-  public succesInscription: InscriptionSuccess | null = null;
+  public signinSuccess: InscriptionSuccess | null = null;
+  public signinError: Error;
+  public loading: boolean = false;
 
   public loginForm: FormGroup;
 
@@ -32,11 +35,10 @@ export class ConnexionComponent {
   }
 
   public ngOnInit(): void {
-    this.succesInscription = this.succesService.getInscriptionData();
-    console.log(this.succesInscription);
+    this.signinSuccess = this.succesService.getInscriptionData();
 
-    if (this.succesInscription) {
-      this.loginForm.get('email')?.setValue(this.succesInscription.email);
+    if (this.signinSuccess) {
+      this.loginForm.get('email')?.setValue(this.signinSuccess.email);
     }
   }
 
@@ -47,16 +49,22 @@ export class ConnexionComponent {
   
   public connexion(): void {
     if (this.loginForm.valid) {
+      this.loading = true;
       const { email, password } = this.loginForm.value;
       console.log(email, password);
 
       this.authService
         .login(email, password)
         .pipe(
+          catchError((error: HttpErrorResponse) => {
+            this.signinError = error.error;
+            this.loading = false;
+            return EMPTY;
+          }),
           tap((response) => {
             this.authService.saveToken(response.token.access_token);
             this.router.navigate(['/chat']).then(() => {
-              window.location.reload();
+              this.loading = false;
             });
           })
         )
