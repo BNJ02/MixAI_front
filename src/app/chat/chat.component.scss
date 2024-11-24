@@ -207,6 +207,27 @@
             border-radius: 50%;
             font-weight: bold;
         }
+
+        .profile-logout-container {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 25%;
+            margin-left: auto;
+
+            .profile-logout {
+                width: 50%;
+                height: 50%;
+                object-fit: contain;  /* Garantit que l'image conserve ses proportions sans déformation */
+            }
+        }
+
+        .profile-logout-container:hover {
+            background-color: rgb(178, 170, 170);
+        }
     }
     
     .profile-container:hover {

@@ -19,8 +19,6 @@
 
             <button class="add-discussion" (click)="addDiscussion()">Add discussion</button>
 
-            <button class="add-discussion" (click)="logout()">Log out</button>
-
             <div class="profile-container" (click)="profile()">
                 <div class="profile-picture">
                     @if (user) {
@@ -32,6 +30,9 @@
                         <span>{{ user.firstName }} {{ user.lastName }}</span>
                     }
                 </div>
+                <div (click)="logout()" class="profile-logout-container">
+                    <img src="../../assets/icones/logout.png" alt="logout" class="profile-logout">
+                </div>                
             </div>
         </div>
     }
