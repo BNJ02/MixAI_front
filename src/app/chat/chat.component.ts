@@ -38,7 +38,7 @@ alertMessage: any;
     private router: Router
   ) {}
 
-  public user: User;
+  public user: User | null;
 
   public sideNavOpen = false;
   public registrationCompleted: boolean;
@@ -62,21 +62,26 @@ alertMessage: any;
 
   public async ngOnInit(): Promise<void> {
     const signinData = this.signinSuccessService.getSigninData();
+
+    // Recharger l'utilisateur à chaque visite de la page
+    this.userService.getMe().subscribe((user) => {
+      if (user) {
+        this.user = user;
+        this.signinSuccessMessage = `Great to see you back again, ${this.user.firstName}!`;
+      } else {
+        this.user = null; // Si l'utilisateur n'est pas trouvé
+      }
+    });
     
     if (!signinData) {
       this.router.navigate(['/connexion']);
       return;
     } else {
       this.signinSuccess = signinData;
-      this.userService.getMe().subscribe((user) => {
-        this.user = user;
-        // Construire le message après que l'utilisateur ait été chargé
-        this.signinSuccessMessage = `Great to see you back again, ${this.user.firstName}!`;
-        this.registrationCompleted = true;
-        setTimeout(() => {
-          this.registrationCompleted = false;
-        }, 5000);
-      });
+      this.registrationCompleted = true;
+      setTimeout(() => {
+        this.registrationCompleted = false;
+      }, 5000);
     }
   }
 
@@ -113,5 +118,9 @@ alertMessage: any;
 
   public logout(): void {
     this.authService.logout();
+  }
+
+  public profile(): void {
+    this.router.navigate(['/profile']);
   }
 }

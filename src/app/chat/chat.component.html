@@ -20,6 +20,19 @@
             <button class="add-discussion" (click)="addDiscussion()">Add discussion</button>
 
             <button class="add-discussion" (click)="logout()">Log out</button>
+
+            <div class="profile-container" (click)="profile()">
+                <div class="profile-picture">
+                    @if (user) {
+                        <h1>{{ user.firstName[0] }}{{ user.lastName[0] }}</h1>
+                    }
+                </div>
+                <div class="profile-name">
+                    @if (user) {
+                        <span>{{ user.firstName }} {{ user.lastName }}</span>
+                    }
+                </div>
+            </div>
         </div>
     }
 
