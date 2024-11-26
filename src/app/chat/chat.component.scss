@@ -10,8 +10,9 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
+        border: #07070792 1px solid;
         padding: 1vh;
-        background-color: #a9a5a5;
+        background-color: #F4F4F5;
 
         .side-nav-discussions {
             width: 90%;
@@ -53,18 +54,51 @@
                 }
             }
         }
-        
-        .add-discussion {
-            width: 95%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0.5rem;
-            border-radius: 10px;
-            background-color: #fff;
 
-            &:hover {
-                background-color: rgb(141, 133, 133);
+        .side-nav-header {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1%;
+            background-color: inherit;
+
+            .side-left-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
+
+                .site-icon {
+                    width: 50px;
+                    /* taille du logo */
+                    height: auto;
+                    /* pour garder les proportions */
+                    border-radius: 50%;
+                    /* Arrondit les bords du logo */
+                }
+            }
+
+            .side-icon-add-discussion {
+                height: 50px;
+                width: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: 0.2s;
+
+                &:hover {
+                    background-color: rgb(225, 225, 225);
+                }
+
+                .plus-icon {
+                    height: 50%;
+                }
             }
         }
     }
@@ -77,7 +111,7 @@
         align-items: center;
         flex-direction: column;
         gap: 1rem;
-        background-color: #f5f5f5;
+        background-color: #fcfcfc;
 
 
         .chat-header {
@@ -178,15 +212,15 @@
         display: flex;
         align-items: center;
         width: 91%;
-        background-color: #909396;
-        border: black 1px solid;
+        background-color: #FAFAFA;
+        border: #E4E4E7 1px solid;
         border-radius: 15px;
         padding: 2%;
         cursor: pointer;
         transition: background-color 0.3s;
       
         .profile-name {
-            font-size: 1.5rem;
+            font-size: 1rem;
             padding-left: 5%;
             color: #333;
             display: flex;
@@ -200,17 +234,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: rgb(201, 202, 207);
-            width: 60px;
-            height: 60px;
-            border: rgb(46, 41, 41) 1px solid;
+            background-color: #E4E4E7;
+            width: 40px;
+            height: 40px;
+            border: #E4E4E7 1px solid;
             border-radius: 50%;
             font-weight: bold;
+            font-size: 0.5rem;
         }
 
         .profile-logout-container {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -226,11 +261,11 @@
         }
 
         .profile-logout-container:hover {
-            background-color: rgb(178, 170, 170);
+            background-color: #E4E4E7;
         }
     }
     
     .profile-container:hover {
-        background-color: #e9ecef;
+        background-color: #F4F4F5;
     }
 }

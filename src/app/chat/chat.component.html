@@ -8,6 +8,16 @@
 <div class="wrapper">
     @if (sideNavOpen) {
         <div class="side-nav">
+            <div class="side-nav-header">
+                <div class="side-left-container">
+                    <img src="../../assets/images/logo_MixAI_comp.png" alt="" class="site-icon">
+                    <h3>MixAI</h3>
+                </div>
+                <div class="side-icon-add-discussion">
+                    <img src="../../assets/icones/plus.png" (click)="addDiscussion()" alt="" class="plus-icon">
+                </div>
+            </div>
+
             <div class="side-nav-discussions">
                 @for (discussion of discussions; track $index) {
                     <div class="discussions" name="" id="">
@@ -16,8 +26,6 @@
                     </div>
                 }
             </div>
-
-            <button class="add-discussion" (click)="addDiscussion()">Add discussion</button>
 
             <div class="profile-container" (click)="profile()">
                 <div class="profile-picture">
@@ -64,10 +72,6 @@
                     <img src="../../assets/icones/send.png" alt="" class="send-icon" />
                 </div>
             </div>
-        </div>
-
-        <div class="chat-box">
-
         </div>
     </div>
 </div>
