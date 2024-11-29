@@ -1,77 +1,119 @@
 @if (registrationCompleted) {
-    <app-alert 
-        [title]="signinSuccessMessage" 
-        [message]="'We hope to greatly assist you in your productivity today.'">
-    </app-alert>
+<app-alert
+  [title]="signinSuccessMessage"
+  [message]="'We hope to greatly assist you in your productivity today.'"
+>
+</app-alert>
 }
 
 <div class="wrapper">
-    @if (sideNavOpen) {
-        <div class="side-nav">
-            <div class="side-nav-header">
-                <div class="side-left-container">
-                    <img src="../../assets/images/logo_MixAI_comp.png" alt="" class="site-icon">
-                    <h3>MixAI</h3>
-                </div>
-                <div class="side-icon-add-discussion">
-                    <img src="../../assets/icones/plus.png" (click)="addDiscussion()" alt="" class="plus-icon">
-                </div>
-            </div>
-
-            <div class="side-nav-discussions">
-                @for (discussion of discussions; track $index) {
-                    <div class="discussions" name="" id="">
-                        <p>{{discussion.title}}</p>
-                        <img src="../../assets/icones/carbage.png" alt="" class="delete-discussion" (click)="deleteDiscussion(discussion)">
-                    </div>
-                }
-            </div>
-
-            <div class="profile-container" (click)="profile()">
-                <div class="profile-picture">
-                    @if (user) {
-                        <h1>{{ user.firstName[0] }}{{ user.lastName[0] }}</h1>
-                    }
-                </div>
-                <div class="profile-name">
-                    @if (user) {
-                        <span>{{ user.firstName }} {{ user.lastName }}</span>
-                    }
-                </div>
-                <div (click)="logout()" class="profile-logout-container">
-                    <img src="../../assets/icones/logout.png" alt="logout" class="profile-logout">
-                </div>                
-            </div>
-        </div>
-    }
-
-    <div class="chat-container">
-        <div class="chat-header">
-            <div (click)="sideNavOpen = !sideNavOpen" [ngClass]="{isActive: sideNavOpen}" class="burger-container">
-                <img src="../../assets/icones/fleche-droite.png" alt="" class="arrow-icon">
-            </div>
-        </div>
-
-        <div class="chat-body">
-
-        </div>
-
-        <div class="chat-input">
-            <div class="input-wrapper">
-                <div class="left">
-                    <select name="" id="">
-                        @for (model of models; track $index) {
-                            <option value="{{model.name}}">{{ model.name }}</option>
-                        }
-                    </select>
-
-                    <input type="text" placeholder="Type a message" />
-                </div>
-
-                <div class="send-container">
-                    <img src="../../assets/icones/send.png" alt="" class="send-icon" />
-                </div>
-            </div>
-        </div>
+  @if (sideNavOpen) {
+  <div class="side-nav">
+    <div class="side-nav-header">
+      <div class="side-left-container">
+        <img
+          src="../../assets/images/logo_MixAI_comp.png"
+          alt=""
+          class="site-icon"
+        />
+        <h3>MixAI</h3>
+      </div>
+      <div class="side-icon-add-discussion">
+        <img
+          src="../../assets/icones/plus.png"
+          (click)="addDiscussion()"
+          alt=""
+          class="plus-icon"
+        />
+      </div>
     </div>
+
+    <div class="side-nav-discussions">
+      @for (discussion of discussions; track $index) {
+      <div class="discussions" name="" id="">
+        <p>{{ discussion.title }}</p>
+        <img
+          src="../../assets/icones/carbage.png"
+          alt=""
+          class="delete-discussion"
+          (click)="deleteDiscussion(discussion)"
+        />
+      </div>
+      }
+    </div>
+
+    <div class="profile-container" (click)="profile()">
+      <div class="profile-picture">
+        @if (user) {
+        <h1>{{ user.firstName[0] }}{{ user.lastName[0] }}</h1>
+        }
+      </div>
+      <div class="profile-name">
+        @if (user) {
+        <span>{{ user.firstName }} {{ user.lastName }}</span>
+        }
+      </div>
+      <div (click)="logout()" class="profile-logout-container">
+        <img
+          src="../../assets/icones/logout.png"
+          alt="logout"
+          class="profile-logout"
+        />
+      </div>
+    </div>
+  </div>
+  }
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <div
+        (click)="sideNavOpen = !sideNavOpen"
+        [ngClass]="{ isActive: sideNavOpen }"
+        class="burger-container"
+      >
+        <img
+          src="../../assets/icones/fleche-droite.png"
+          alt=""
+          class="arrow-icon"
+        />
+      </div>
+    </div>
+
+    <div class="chat-body">
+      <div class="chat-messages">
+        @for (message of chatResponses$ | async; track $index) {
+        <div
+          class="message-container"
+          [ngClass]="{ 'message-right': message.role === 'user' }"
+        >
+          <div class="message">
+            <p>{{ message.content }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <form [formGroup]="promptForm" (submit)="onPrompt()" class="chat-input">
+      <div class="input-wrapper">
+        <div class="left">
+          <select name="" id="">
+            @for (model of models; track $index) {
+            <option value="{{ model.name }}">{{ model.name }}</option>
+            }
+          </select>
+
+          <input
+            formControlName="prompt"
+            type="text"
+            placeholder="Type a message"
+          />
+        </div>
+
+        <button type="submit" class="send-container">
+          <img src="../../assets/icones/send.png" alt="" class="send-icon" />
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

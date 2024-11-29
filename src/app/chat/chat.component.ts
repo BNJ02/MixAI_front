@@ -2,41 +2,61 @@ import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { slideInFromLeft } from '../animations/animations';
 import { AuthService } from '../services/auth.service';
-
-// import { BrowserModule } from '@angular/platform-browser';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { SigninSuccessService } from '../services/signinSuccess.service';
 import { SigninSuccess } from '../types/signinSuccess.interface';
 import { Router } from '@angular/router';
 import { AlertComponent } from '../alert/alert.component';
 import { UserService } from '../services/user.service';
 import { User } from '../types/user.interface';
+import { GeminiService } from '../services/gemini.service';
+import { BehaviorSubject, tap } from 'rxjs';
 
 export interface Model {
-  name: string
+  name: string;
+}
+
+export interface Discussion {
+  role: 'user' | 'ai';
+  content: string;
 }
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [NgClass, MatSidenavModule, MatIconModule, MatListModule, MatFormFieldModule, CommonModule, AlertComponent],
+  imports: [NgClass, CommonModule, AlertComponent, ReactiveFormsModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
-  animations: [slideInFromLeft]
+  animations: [slideInFromLeft],
 })
 export class ChatComponent {
-alertMessage: any;
+  alertMessage: any;
+  public promptForm: FormGroup;
+
+  public chatResponses: BehaviorSubject<Discussion[]> = new BehaviorSubject<
+    Discussion[]
+  >([]);
+  public chatResponses$ = this.chatResponses.asObservable();
+
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private signinSuccessService: SigninSuccessService,
     private userService: UserService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private geminiService: GeminiService,
+    private fb: FormBuilder
+  ) {
+    this.promptForm = this.fb.group({
+      prompt: ['', [Validators.required]],
+    });
+  }
 
   public user: User | null;
 
@@ -46,9 +66,9 @@ alertMessage: any;
   public signinSuccessMessage: string = 'Great to see you back again';
 
   public models: Model[] = [
-    { name: 'Gemini'},
-    { name: 'ChatGPT'},
-    { name: 'Mistral AI'}
+    { name: 'Gemini' },
+    { name: 'ChatGPT' },
+    { name: 'Mistral AI' },
   ];
 
   public showFiller = false;
@@ -72,7 +92,7 @@ alertMessage: any;
         this.user = null; // Si l'utilisateur n'est pas trouvé
       }
     });
-    
+
     if (!signinData) {
       this.router.navigate(['/connexion']);
       return;
@@ -92,15 +112,38 @@ alertMessage: any;
     );
   }
 
-  public selectDiscussion(discussion: { title: string; content: string }): void {
+  public selectDiscussion(discussion: {
+    title: string;
+    content: string;
+  }): void {
     this.selectedDiscussion = discussion;
   }
 
-  public deleteDiscussion(discussion: { title: string; content: string }): void {
+  public onPrompt(): void {
+    this.geminiService
+      .askGemini(this.promptForm.get('prompt')?.value)
+      .pipe(
+        tap((res: string) =>
+          this.chatResponses.next([
+            ...this.chatResponses.getValue(),
+            { role: 'user', content: this.promptForm.get('prompt')?.value },
+            { role: 'ai', content: res },
+          ])
+        )
+      )
+      .subscribe();
+  }
+
+  public deleteDiscussion(discussion: {
+    title: string;
+    content: string;
+  }): void {
     this.discussions = this.discussions.filter((d) => d !== discussion);
-    this.filteredDiscussions = this.filteredDiscussions.filter((d) => d !== discussion);
-    this.selectedDiscussion
-      = this.selectedDiscussion === discussion ? null : this.selectedDiscussion;
+    this.filteredDiscussions = this.filteredDiscussions.filter(
+      (d) => d !== discussion
+    );
+    this.selectedDiscussion =
+      this.selectedDiscussion === discussion ? null : this.selectedDiscussion;
 
     if (this.discussions.length === 0) {
       this.selectedDiscussion = null;
@@ -110,7 +153,7 @@ alertMessage: any;
   public addDiscussion(): void {
     this.discussions.push({
       title: `Discussion ${this.discussions.length + 1}`,
-      content: `Contenu de la discussion ${this.discussions.length + 1}`
+      content: `Contenu de la discussion ${this.discussions.length + 1}`,
     });
 
     this.filteredDiscussions = [...this.discussions];
