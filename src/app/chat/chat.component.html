@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <div class="chat-body">
+    <div class="chat-body" #chatBody>
       <div class="chat-messages">
         @for (message of chatResponses$ | async; track $index) {
         <div

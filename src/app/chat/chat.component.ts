@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { slideInFromLeft } from '../animations/animations';
 import { AuthService } from '../services/auth.service';
 import {
@@ -37,6 +37,7 @@ export interface Discussion {
   animations: [slideInFromLeft],
 })
 export class ChatComponent {
+  @ViewChild('chatBody') chatBody!: ElementRef;
   alertMessage: any;
   public promptForm: FormGroup;
 
@@ -105,6 +106,15 @@ export class ChatComponent {
     }
   }
 
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+  private scrollToBottom(): void {
+    if (this.chatBody) {
+      this.chatBody.nativeElement.scrollTop = this.chatBody.nativeElement.scrollHeight;
+    }
+  }
+
   public filterDiscussions(event: Event): void {
     const query = (event.target as HTMLInputElement).value.toLowerCase();
     this.filteredDiscussions = this.discussions.filter((d) =>
@@ -120,18 +130,25 @@ export class ChatComponent {
   }
 
   public onPrompt(): void {
+    this.chatResponses.next([
+      ...this.chatResponses.getValue(),
+      { role: 'user', content: this.promptForm.get('prompt')?.value },
+    ]);
+
     this.geminiService
       .askGemini(this.promptForm.get('prompt')?.value)
       .pipe(
         tap((res: string) =>
           this.chatResponses.next([
             ...this.chatResponses.getValue(),
-            { role: 'user', content: this.promptForm.get('prompt')?.value },
             { role: 'ai', content: res },
           ])
         )
       )
       .subscribe();
+
+    // Réinitialiser l'input à vide après soumission
+    this.promptForm.get('prompt')?.setValue('');
   }
 
   public deleteDiscussion(discussion: {
