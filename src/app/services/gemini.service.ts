@@ -10,10 +10,11 @@ export class GeminiService {
   private apiUrl = `${environment.apiUrl}`;
   constructor(private http: HttpClient) {}
 
-  public askGemini(prompt: string): Observable<string> {
+  public askGemini(prompt: string, model: string): Observable<string> {
     return this.http
       .post<{ response: string }>(`${this.apiUrl}/gemini/prompt`, {
-        prompt,
+        prompt, 
+        model,
       })
       .pipe(map((res) => res.response));
   }

@@ -82,12 +82,12 @@
     <div class="chat-body" #chatBody>
       <div class="chat-messages">
         @for (message of chatResponses$ | async; track $index) {
-          <div
-            class="message-container"
-            [ngClass]="{ 'message-right': message.role === 'user' }"
-          >
-            <div class="message" [innerHTML]="message.content"></div>
-          </div>
+        <div
+          class="message-container"
+          [ngClass]="{ 'message-right': message.role === 'user' }"
+        >
+          <div class="message" [innerHTML]="message.content"></div>
+        </div>
         }
       </div>
     </div>
@@ -95,10 +95,10 @@
     <form [formGroup]="promptForm" (submit)="onPrompt()" class="chat-input">
       <div class="input-wrapper">
         <div class="left">
-          <select name="" id="">
-            @for (model of models; track $index) {
-            <option value="{{ model.name }}">{{ model.name }}</option>
-            }
+          <select name="" id="modelSelect" (change)="onModelChange($event)">
+            <option *ngFor="let model of models; let i = index" [value]="model.name">
+              {{ model.name }}
+            </option>
           </select>
 
           <input

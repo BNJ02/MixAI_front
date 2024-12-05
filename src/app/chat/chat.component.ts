@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/cor
 import { slideInFromLeft } from '../animations/animations';
 import { AuthService } from '../services/auth.service';
 import {
+  FormsModule,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -22,6 +23,7 @@ import { marked } from 'marked';
 
 export interface Model {
   name: string;
+  moduleName: string;
 }
 
 export interface Discussion {
@@ -32,7 +34,7 @@ export interface Discussion {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [NgClass, CommonModule, AlertComponent, ReactiveFormsModule],
+  imports: [NgClass, CommonModule, AlertComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
   animations: [slideInFromLeft],
@@ -68,10 +70,13 @@ export class ChatComponent {
   public signinSuccessMessage: string = 'Great to see you back again';
 
   public models: Model[] = [
-    { name: 'Gemini' },
-    { name: 'ChatGPT' },
-    { name: 'Mistral AI' },
+    { name: 'Gemini 1.5 Flash', moduleName: 'gemini-1.5-flash' },
+    { name: 'Gemini 1.5 Flash-8B', moduleName: 'gemini-1.5-flash-8b' },
+    { name: 'Gemini 1.5 Pro', moduleName: 'gemini-1.5-pro' },
+    { name: 'Gemini 1.0 Pro', moduleName: 'gemini-1.0-pro' },
   ];
+  public selectedModel: string = '';
+  public selectModelObject: Model = this.models[0];
 
   public showFiller = false;
   public discussions = [
@@ -81,6 +86,13 @@ export class ChatComponent {
 
   public filteredDiscussions = [...this.discussions];
   public selectedDiscussion: { title: string; content: string } | null = null;
+
+  public onModelChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedValue = target.value;
+    this.selectedModel = selectedValue;
+    console.log('Selected model:', selectedValue);
+  }
 
   public async ngOnInit(): Promise<void> {
     const signinData = this.signinSuccessService.getSigninData();
@@ -136,13 +148,16 @@ export class ChatComponent {
       { role: 'user', content: this.promptForm.get('prompt')?.value },
     ]);
 
+    this.selectModelObject = this.models.find(model => model.name === this.selectedModel) || this.models[0];
+    console.log('TEST : ', this.selectModelObject)
+
     this.geminiService
-      .askGemini(this.promptForm.get('prompt')?.value)
+      .askGemini(this.promptForm.get('prompt')?.value, this.selectModelObject.moduleName)
       .pipe(
         tap(async (res: string) =>
           {
-            console.log(res);
-            const response_formatted: string = await marked(res);
+            let response_formatted: string = await marked(res);
+            response_formatted = response_formatted.replace(/\n$/, '');
             this.chatResponses.next([
               ...this.chatResponses.getValue(),
               { role: 'ai', content: response_formatted },
