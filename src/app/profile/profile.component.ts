@@ -31,7 +31,7 @@ export class ProfileComponent {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      API_key: ['', Validators.required]
+      geminiAPIkey: ['', Validators.required]
     });
   }
 
@@ -52,6 +52,7 @@ export class ProfileComponent {
       firstName: this.profileForm.get('firstName')?.value,
       lastName: this.profileForm.get('lastName')?.value,
       email: this.profileForm.get('email')?.value,
+      geminiAPIkey: this.profileForm.get('geminiAPIkey')?.value,
     };
     this.userService
       .updateUser(userRequest)

@@ -3,6 +3,7 @@ export interface User {
   lastName: string;
   email: string;
   password?: string;
+  geminiAPIkey?: string;
 }
 
 export interface userRequest {
@@ -10,4 +11,5 @@ export interface userRequest {
   lastName: string;
   email: string;
   password?: string;
+  geminiAPIkey?: string;
 }

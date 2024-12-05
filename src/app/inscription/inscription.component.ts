@@ -12,7 +12,7 @@ import { SignupSuccessService } from '../services/signupSuccess.service';
 @Component({
   selector: 'app-inscription',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './inscription.component.html',
   styleUrl: './inscription.component.scss',
 })
@@ -34,6 +34,7 @@ export class InscriptionComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
+      geminiAPIkey: [''],
     });
   }
 
