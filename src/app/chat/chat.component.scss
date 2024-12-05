@@ -162,6 +162,7 @@
       scroll-behavior: smooth; /* Défilement fluide */
 
       .chat-messages {
+        white-space: pre-wrap;
         padding: 2rem;
         display: flex;
         padding: 2vh;
@@ -178,7 +179,6 @@
             justify-content: flex-end;
 
             .message {
-              justify-content: flex-end;
               background-color: #F3F3F3;
               p {
                 color: black;
@@ -187,7 +187,6 @@
           }
 
           .message {
-            display: flex;
             box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
             border-radius: 10px;
             padding: 1rem;

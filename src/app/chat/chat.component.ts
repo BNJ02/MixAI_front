@@ -18,6 +18,7 @@ import { UserService } from '../services/user.service';
 import { User } from '../types/user.interface';
 import { GeminiService } from '../services/gemini.service';
 import { BehaviorSubject, tap } from 'rxjs';
+import { marked } from 'marked';
 
 export interface Model {
   name: string;
@@ -138,11 +139,15 @@ export class ChatComponent {
     this.geminiService
       .askGemini(this.promptForm.get('prompt')?.value)
       .pipe(
-        tap((res: string) =>
-          this.chatResponses.next([
-            ...this.chatResponses.getValue(),
-            { role: 'ai', content: res },
-          ])
+        tap(async (res: string) =>
+          {
+            console.log(res);
+            const response_formatted: string = await marked(res);
+            this.chatResponses.next([
+              ...this.chatResponses.getValue(),
+              { role: 'ai', content: response_formatted },
+            ]);
+          },
         )
       )
       .subscribe();

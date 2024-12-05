@@ -82,14 +82,12 @@
     <div class="chat-body" #chatBody>
       <div class="chat-messages">
         @for (message of chatResponses$ | async; track $index) {
-        <div
-          class="message-container"
-          [ngClass]="{ 'message-right': message.role === 'user' }"
-        >
-          <div class="message">
-            <p>{{ message.content }}</p>
+          <div
+            class="message-container"
+            [ngClass]="{ 'message-right': message.role === 'user' }"
+          >
+            <div class="message" [innerHTML]="message.content"></div>
           </div>
-        </div>
         }
       </div>
     </div>
