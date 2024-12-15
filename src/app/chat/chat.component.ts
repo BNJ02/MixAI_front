@@ -18,19 +18,18 @@ import { AlertComponent } from '../alert/alert.component';
 import { UserService } from '../services/user.service';
 import { User } from '../types/user.interface';
 import { GeminiService } from '../services/gemini.service';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, delay, tap } from 'rxjs';
 import { marked } from 'marked';
+import { Discussion } from '../types/discussion.interface';
+import { EntireDiscussion } from '../types/entire_discussion.interface';
+import { DiscussionService } from '../services/discussion.service';
 
 export interface Model {
   name: string;
   moduleName: string;
 }
 
-export interface Discussion {
-  role: 'user' | 'ai';
-  content: string;
-}
-
+// history: Array<{ role: string; parts: Array<{ text: string }> }>;
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -49,12 +48,17 @@ export class ChatComponent {
   >([]);
   public chatResponses$ = this.chatResponses.asObservable();
 
+  trackByFn(index: number, item: any): number {
+    return item.id;
+  }
+
   constructor(
     private authService: AuthService,
     private signinSuccessService: SigninSuccessService,
     private userService: UserService,
     private router: Router,
     private geminiService: GeminiService,
+    private discussionService: DiscussionService,
     private fb: FormBuilder
   ) {
     this.promptForm = this.fb.group({
@@ -63,6 +67,8 @@ export class ChatComponent {
   }
 
   public user: User | null;
+
+  public discussionsLoaded: boolean = false;
 
   public sideNavOpen = false;
   public registrationCompleted: boolean;
@@ -79,13 +85,9 @@ export class ChatComponent {
   public selectModelObject: Model = this.models[0];
 
   public showFiller = false;
-  public discussions = [
-    { title: 'Discussion 1', content: 'Contenu de la discussion 1' },
-    { title: 'Discussion 2', content: 'Contenu de la discussion 2' },
-  ];
+  public discussions: EntireDiscussion[] = [];
 
-  public filteredDiscussions = [...this.discussions];
-  public selectedDiscussion: { title: string; content: string } | null = null;
+  public selectedDiscussion: EntireDiscussion | null = null;
 
   public onModelChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -105,6 +107,21 @@ export class ChatComponent {
       } else {
         this.user = null; // Si l'utilisateur n'est pas trouvé
       }
+    });
+
+    // Charger toutes les discussions de l'utilisateur
+    this.discussionService.getAllDiscussions().subscribe((discussions: any) => {
+      this.discussions = discussions.map((discussion: { id: number; history: any[]; }) => ({
+        ...this.discussions,
+        id: discussion.id,
+        title: `Discussion ${discussion.id}`,
+        content: discussion.history.map(historyItem => ({
+          role: historyItem.role,
+          parts: historyItem.parts.map((part: { text: any; }) => ({ text: part.text }))
+        }))
+      }));
+
+      this.discussionsLoaded = true;
     });
 
     if (!signinData) {
@@ -128,72 +145,67 @@ export class ChatComponent {
     }
   }
 
-  public filterDiscussions(event: Event): void {
-    const query = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredDiscussions = this.discussions.filter((d) =>
-      d.title.toLowerCase().includes(query)
-    );
-  }
-
-  public selectDiscussion(discussion: {
-    title: string;
-    content: string;
-  }): void {
+  public async selectDiscussion(discussion: EntireDiscussion): Promise<void> {
     this.selectedDiscussion = discussion;
+    // Mettre à jour le contenu du chat avec la discussion sélectionnée
+    const formattedContent = await Promise.all(discussion.content.map(async item => ({
+      ...item,
+      parts: await Promise.all(item.parts.map(async part => {
+        let textFormatted: string = await marked(part.text);
+        textFormatted = textFormatted.replace(/\n$/, '');
+        return { text: textFormatted };
+      }))
+    })));
+    this.chatResponses.next(formattedContent);
   }
 
   public onPrompt(): void {
     this.chatResponses.next([
       ...this.chatResponses.getValue(),
-      { role: 'user', content: this.promptForm.get('prompt')?.value },
+      { role: 'user', parts: [{ text: this.promptForm.get('prompt')?.value }] },
     ]);
 
     this.selectModelObject = this.models.find(model => model.name === this.selectedModel) || this.models[0];
     console.log('TEST : ', this.selectModelObject)
 
-    this.geminiService
-      .askGemini(this.promptForm.get('prompt')?.value, this.selectModelObject.moduleName)
-      .pipe(
-        tap(async (res: string) =>
-          {
-            let response_formatted: string = await marked(res);
-            response_formatted = response_formatted.replace(/\n$/, '');
-            this.chatResponses.next([
-              ...this.chatResponses.getValue(),
-              { role: 'ai', content: response_formatted },
-            ]);
-          },
-        )
-      )
-      .subscribe();
+    if (this.selectedDiscussion?.id !== undefined) {
+      this.geminiService
+          .askGeminiWithHistory(this.selectedDiscussion.id, this.promptForm.get('prompt')?.value, this.selectModelObject.moduleName)
+          .pipe(
+            tap(async (res: string) => {
+              let response_formatted: string = await marked(res);
+              response_formatted = response_formatted.replace(/\n$/, '');
+              this.chatResponses.next([
+                  ...this.chatResponses.getValue(),
+                  { role: 'model', parts: [{ text: response_formatted }] },
+              ]);
+            })
+          )
+          .subscribe();
+    }
 
     // Réinitialiser l'input à vide après soumission
     this.promptForm.get('prompt')?.setValue('');
   }
 
-  public deleteDiscussion(discussion: {
-    title: string;
-    content: string;
-  }): void {
-    this.discussions = this.discussions.filter((d) => d !== discussion);
-    this.filteredDiscussions = this.filteredDiscussions.filter(
-      (d) => d !== discussion
-    );
-    this.selectedDiscussion =
-      this.selectedDiscussion === discussion ? null : this.selectedDiscussion;
-
-    if (this.discussions.length === 0) {
-      this.selectedDiscussion = null;
-    }
+  public deleteDiscussion(discussion: EntireDiscussion): void {
+    console.log('Deleting discussion:', discussion.id);
+    this.discussionService.deleteDiscussion(discussion.id).subscribe((res) => {
+      console.log('Discussion deleted:', res);
+      this.discussions = this.discussions.filter((d) => d.id !== discussion.id);
+    });
   }
 
   public addDiscussion(): void {
-    this.discussions.push({
-      title: `Discussion ${this.discussions.length + 1}`,
-      content: `Contenu de la discussion ${this.discussions.length + 1}`,
+    this.discussionService.createDiscussion().subscribe((res) => {
+      console.log('Discussion created:', res);
+      const newEntireDiscussion = {
+        id: res.id,
+        title: `Discussion ${res.id}`,
+        content: res.history,
+      };
+      this.discussions.push(newEntireDiscussion);
     });
-
-    this.filteredDiscussions = [...this.discussions];
   }
 
   public logout(): void {

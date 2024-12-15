@@ -30,7 +30,7 @@
 
     <div class="side-nav-discussions">
       @for (discussion of discussions; track $index) {
-      <div class="discussions" name="" id="">
+      <div class="discussions" name="" id="" (click)="selectDiscussion(discussion)">
         <p>{{ discussion.title }}</p>
         <img
           src="../../assets/icones/carbage.png"
@@ -86,7 +86,7 @@
           class="message-container"
           [ngClass]="{ 'message-right': message.role === 'user' }"
         >
-          <div class="message" [innerHTML]="message.content"></div>
+          <div class="message" [innerHTML]="message.parts[0].text"></div>
         </div>
         }
       </div>
