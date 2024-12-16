@@ -90,6 +90,11 @@
         </div>
         }
       </div>
+      <div *ngIf="isLoadingResponse" class="loading-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
     </div>
 
     <form [formGroup]="promptForm" (submit)="onPrompt()" class="chat-input">

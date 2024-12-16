@@ -69,6 +69,7 @@ export class ChatComponent {
   public user: User | null;
 
   public discussionsLoaded: boolean = false;
+  public isLoadingResponse: boolean = false;
 
   public sideNavOpen = false;
   public registrationCompleted: boolean;
@@ -122,6 +123,8 @@ export class ChatComponent {
       }));
 
       this.discussionsLoaded = true;
+      this.selectDiscussion(this.discussions[0])
+      this.selectedDiscussion = this.discussions[0];
     });
 
     if (!signinData) {
@@ -157,6 +160,19 @@ export class ChatComponent {
       }))
     })));
     this.chatResponses.next(formattedContent);
+
+    // Charger toutes les discussions de l'utilisateur
+    this.discussionService.getAllDiscussions().subscribe((discussions: any) => {
+      this.discussions = discussions.map((discussion: { id: number; history: any[]; }) => ({
+        ...this.discussions,
+        id: discussion.id,
+        title: `Discussion ${discussion.id}`,
+        content: discussion.history.map(historyItem => ({
+          role: historyItem.role,
+          parts: historyItem.parts.map((part: { text: any; }) => ({ text: part.text }))
+        }))
+      }));
+    });
   }
 
   public onPrompt(): void {
@@ -169,6 +185,8 @@ export class ChatComponent {
     console.log('TEST : ', this.selectModelObject)
 
     if (this.selectedDiscussion?.id !== undefined) {
+      this.isLoadingResponse = true; // Début du chargement
+
       this.geminiService
           .askGeminiWithHistory(this.selectedDiscussion.id, this.promptForm.get('prompt')?.value, this.selectModelObject.moduleName)
           .pipe(
@@ -179,6 +197,7 @@ export class ChatComponent {
                   ...this.chatResponses.getValue(),
                   { role: 'model', parts: [{ text: response_formatted }] },
               ]);
+              this.isLoadingResponse = false; // Fin du chargement
             })
           )
           .subscribe();
